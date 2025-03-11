@@ -1,0 +1,162 @@
+CREATE TABLE token ()
+
+CREATE TABLE users (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('guichet', 'agence', 'admin') DEFAULT 'guichet',
+    reset_password_token TEXT DEFAULT NULL,
+    reset_password_at DATETIME DEFAULT NULL,
+)
+
+CREATE TABLE reports (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+
+
+
+
+    user_id INT UNSIGNED,
+    week_year VARCHAR(10) NOT NULL, -- Semaine et année (ex : 03-2025)
+    status ENUM('en attente', 'valide', 'rejete') DEFAULT 'en attente',
+    comments TEXT DEFAULT NULL, -- Commentaires lors de la validation/rejet
+    locked BOOLEAN DEFAULT FALSE, -- Indiquer si un rapport est verrouillé
+
+    -- REUNION, CEREMONIES, SEMINAIRES, ATELIER, RENCONTRES (SEANCES DE TRAVAIL)
+        -- Rencontres avec les partenaires locaux
+    nom_partenaire VARCHAR(255),
+    objectif_rencontre VARCHAR(255),
+    resultat_obtenu TEXT,
+        -- Rencontres avec les employeurs
+    nom_entreprise VARCHAR(255),
+    objectif_entreprise VARCHAR(255),
+    opportunites_identifiees TEXT,
+
+    -- CEREMONIES, SEMINAIRES ET ATELIER
+        -- GESTION COURANTE DE L’AGENCE REGIONALE
+            -- Accueil et orientation 
+    nbr_inscrits INT NOT NULL,
+    nbr_jeunes_entretien_diagnostic INT NOT NULL,
+    nbr_jeunes_orientes_dispositif INT NOT NULL,
+    nbr_jeunes_suivi INT NOT NULL,
+
+            -- Activité de Prospection
+                -- Prospections effectuées
+    nbr_prospections_effectuees INT NOT NULL,
+    nbr_offres_recueillies INT NOT NULL,
+
+            -- Traitement des offres
+                -- Nombre d’offres traitées
+    nbr_jeunes_mis_relations INT NOT NULL,
+
+                -- Placement
+    nbr_jeunes_places_stage_immersion INT NOT NULL,
+    nbr_jeunes_places_stage_ecole INT NOT NULL,
+    nbr_jeunes_places_stage_qualification INT NOT NULL,
+    nbr_jeunes_places_cdd_cdi INT NOT NULL,
+    nbr_dossiers_traites_et_transmis_pour_paiement INT NOT NULL,
+
+                -- Activités d’accompagnement à l’entrepreneuriat
+    nbr_jeunes_profiles INT NOT NULL,
+    nbr_jeunes_accompagnes INT NOT NULL,
+    nbr_dossiers_soumis_sur_plateforme INT NOT NULL,
+
+            -- Visites de Suivi
+                -- Stage/Emploi
+    nom_entreprise VARCHAR(255),
+    situation_beneficiaires_stage_emploi TEXT,
+    points_amelioration_identifies TEXT,
+
+                -- Entrepreneuriat
+    nom_beneficiaire VARCHAR(255),
+    progres_observes VARCHAR(255),
+    actions_necessaires VARCHAR(255),
+
+            -- Ateliers et Formations
+                -- Ateliers
+    ateliers_organises VARCHAR(255),
+    titre_atelier VARCHAR(255),
+    date DATETIME,
+    nbr_participants INT NOT NULL,
+    objectif_atelier VARCHAR(255),
+    commentaires_resultats TEXT,
+                -- Formations
+    formation_dispensees VARCHAR(255),
+    titre_formation VARCHAR(255),
+    date DATETIME,
+    nbr_participants_formation INT NOT NULL,
+    objectif_formation VARCHAR(255),
+    commentaires_resultats_formation TEXT,
+
+    -- POINTS D’ATTENTION OU DE DÉCISIONS
+        -- Conditions de travail et observations
+    suggestions_ameliorer_operations VARCHAR(255),
+            -- Besoin spécifiques
+    nom_guichet VARCHAR(255),
+    difficultes_recommandations TEXT,
+    justificatifs TEXT,
+
+    -- PERSPECTIVES POUR LA SEMAINE SUIVANTE
+        -- Objectifs principaux
+    activites_prevues VARCHAR(255),
+    rencontres_planifiees VARCHAR(255),
+    ateliers_et_formations VARCHAR(255),
+    visites_de_suivi VARCHAR(255),
+    ressources_necessaires TEXT,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_reports_users
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE RESTRICT
+)
+
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE reports_comments (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    report_id INT UNSIGNED,
+    user_id INT UNSIGNED,
+    action ENUM('valide', 'rejete'),
+    comment TEXT DEFAULT NULL,  -- Ajout du champ commentaire
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_reports_comments
+        FOREIGN KEY (report_id)
+        REFERENCES reports(id)
+        ON DELETE CASCADE
+        ON UPDATE RESTRICT,
+    CONSTRAINT fk_reports_comments_users
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE RESTRICT
+)
+
+CREATE TABLE notifications (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    user_id INT UNSIGNED,
+    message TEXT NOT NULL, -- Contenu de la notification
+    is_read BOOLEAN DEFAULT FALSE, -- Statut de lecture
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_notification_users
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE RESTRICT
+)
+
+
+
+
+-- SQL Index

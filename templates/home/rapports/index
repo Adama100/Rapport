@@ -1,0 +1,138 @@
+function is_report_locked($report_id) {
+    global $pdo;
+    
+    // Vérifier si le rapport est verrouillé
+    $stmt = $pdo->prepare("SELECT locked FROM reports WHERE id = ?");
+    $stmt->bindParam(1, $report_id);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['locked'] == TRUE;
+}
+
+
+
+if (data.length > 0) {
+            let html = '<table>';
+            html += '<thead><tr><th>Nom du Guichet</th><th>Date de Soumission</th><th>Type de Rapport</th><th>Statut</th></tr></thead><tbody>';
+            
+            // Remplir le tableau avec les résultats
+            data.forEach(rapport => {
+                html += <tr>
+                            <td>${rapport.nom_guichet}</td>
+                            <td>${rapport.date_soumission}</td>
+                            <td>${rapport.type_rapport}</td>
+                            <td>${rapport.statut}</td>
+                          </tr>;
+                        });
+            html += '</tbody></table>';
+            resultsDiv.innerHTML = html;
+        } else {
+            resultsDiv.innerHTML = '<p>Aucun résultat trouvé.</p>';
+        }
+
+
+
+
+
+
+
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+$section = $phpWord->addSection();
+
+// Récupérer tous les rapports de la base de données
+$pdo = new PDO('mysql:host=localhost;dbname=your_db', 'username', 'password');
+$stmt = $pdo->query("SELECT * FROM reports");
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $section->addText("Guichet: " . $row['guichet_name']);
+    $section->addText("Rapport: " . $row['content']);
+    $section->addText("Date de soumission: " . $row['submission_date']);
+    $section->addText("\n");
+}
+
+// Enregistrer le fichier Word
+$fileName = "rapport_complet.docx";
+$phpWord->save($fileName, 'Word2007');
+
+/*
+Téléchargement du rapport
+
+Après avoir généré le rapport, l'utilisateur peut télécharger le fichier Word :
+
+header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+header("Content-Disposition: attachment; filename=rapport_complet.docx");
+readfile('rapport_complet.docx');
+*/
+
+
+
+
+
+
+require_once 'bootstrap.php';
+
+// Creating the new document...
+$phpWord = new \PhpOffice\PhpWord\PhpWord();
+
+/* Note: any element you append to a document must reside inside of a Section. */
+
+// Adding an empty Section to the document...
+$section = $phpWord->addSection();
+// Adding Text element to the Section having font styled by default...
+$section->addText(
+    '"Learn from yesterday, live for today, hope for tomorrow. '
+        . 'The important thing is not to stop questioning." '
+        . '(Albert Einstein)'
+);
+
+/*
+ * Note: it's possible to customize font style of the Text element you add in three ways:
+ * - inline;
+ * - using named font style (new font style object will be implicitly created);
+ * - using explicitly created font style object.
+ */
+
+// Adding Text element with font customized inline...
+$section->addText(
+    '"Great achievement is usually born of great sacrifice, '
+        . 'and is never the result of selfishness." '
+        . '(Napoleon Hill)',
+    array('name' => 'Tahoma', 'size' => 10)
+);
+
+// Adding Text element with font customized using named font style...
+$fontStyleName = 'oneUserDefinedStyle';
+$phpWord->addFontStyle(
+    $fontStyleName,
+    array('name' => 'Tahoma', 'size' => 10, 'color' => '1B2232', 'bold' => true)
+);
+$section->addText(
+    '"The greatest accomplishment is not in never falling, '
+        . 'but in rising again after you fall." '
+        . '(Vince Lombardi)',
+    $fontStyleName
+);
+
+// Adding Text element with font customized using explicitly created font style object...
+$fontStyle = new \PhpOffice\PhpWord\Style\Font();
+$fontStyle->setBold(true);
+$fontStyle->setName('Tahoma');
+$fontStyle->setSize(13);
+$myTextElement = $section->addText('"Believe you can and you\'re halfway there." (Theodor Roosevelt)');
+$myTextElement->setFontStyle($fontStyle);
+
+// Saving the document as OOXML file...
+$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+$objWriter->save('helloWorld.docx');
+
+// Saving the document as ODF file...
+$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'ODText');
+$objWriter->save('helloWorld.odt');
+
+// Saving the document as HTML file...
+$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML');
+$objWriter->save('helloWorld.html');
+
+/* Note: we skip RTF, because it's not XML-based and requires a different example. */
+/* Note: we skip PDF, because "HTML-to-PDF" approach is used to create PDF documents. */
+

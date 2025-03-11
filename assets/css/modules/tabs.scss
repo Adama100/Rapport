@@ -1,0 +1,24 @@
+html {
+    scroll-padding: 50px; 
+}
+
+.nav-pills {
+    display: flex;
+    justify-content: center;
+}
+
+.nav-pills a {
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+.nav-pills a[aria-selected="true"] {
+    background: var(--color-light);
+    color: white;
+}
+
+.nav-pills a:hover,
+.nav-pills a:focus {
+    background: var(--color-light) linear-gradient(to top, rgba(0,0,0,.5), rgba(0,0,0,.5));
+}

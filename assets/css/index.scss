@@ -1,0 +1,20 @@
+@import "./libs/bootstrap";
+
+
+:root {
+    --color-light: #CCC;
+    --border: #d5e3ec;
+}
+
+
+// Pages
+// ======
+@import "./pages/login";
+
+// Modules
+// ========
+@import "./modules/tabs.scss";
+
+// Tools
+// ======
+@import "./tools/breadcrumb";
