@@ -7,6 +7,7 @@
 
 
 
+
 To github.com:Adama100/Rapport.git
  ! [rejected]        main -> main (non-fast-forward)
 error: failed to push some refs to 'github.com:Adama100/Rapport.git'
